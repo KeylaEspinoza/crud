@@ -6,7 +6,7 @@ var Article = mongoose.model("Article");
 router.get("/", (req, res) => {
   Article.find(
     {},
-    ["title", "description", "body", "autor"],
+    ["title", "description", "body", "autor", "listComments"],
     (err, articles) => {
       res.json(articles);
     }
@@ -48,6 +48,22 @@ router.put("/:id", (req, res) => {
       $set: {
         title: req.body.title,
         autor: req.body.autor,
+      },
+    }
+  ).then(() => {
+    res.json({ isUpdated: true });
+  });
+});
+
+/**
+ * New endpoint for add comment
+ */
+router.put("/:id/newComment", (req, res) => {
+  Article.updateOne(
+    { _id: req.params.id },
+    {
+      $push: {
+        listComments: req.body.newComment,
       },
     }
   ).then(() => {
